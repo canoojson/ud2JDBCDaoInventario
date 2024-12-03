@@ -163,7 +163,7 @@ public class DaoUsuario extends DaoGenerico<Usuario, Integer> {
 
 	@Override
 	public Usuario buscarPorId(Integer id) throws BusinessException {
-		Usuario result = null;
+		Usuario result = new Usuario();
 		try {
 			String sql = "SELECT * FROM usuario WHERE idusuario=?";
 			pstm = con.prepareStatement(sql);
@@ -197,15 +197,16 @@ public class DaoUsuario extends DaoGenerico<Usuario, Integer> {
 		return result;
 	}
 	public ArrayList<Usuario> buscarPorDepartamento(Integer iddept) throws BusinessException {
-		Usuario usu = null;
 		ArrayList<Usuario> result= new ArrayList<Usuario>();
 		try {
+			
 			String sql = "SELECT * FROM usuario WHERE departamento=?";
 			pstm = con.prepareStatement(sql);
 			pstm.setInt(1, iddept);
 			rs = pstm.executeQuery();
 
 			while(rs.next()) {
+				Usuario usu = new Usuario();
 				usu.setIdusuario(rs.getInt("idusuario"));
 				usu.setUsername(rs.getString("username"));
 				usu.setPassword(rs.getString("password"));
