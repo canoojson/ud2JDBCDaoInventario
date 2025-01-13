@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import Pojos.Departamento;
@@ -170,6 +171,36 @@ public class DaoDepartamento extends DaoGenerico<Departamento, Integer> {
 	            actualizar(d);
 	        } else {
 	            grabar(d);
+	        }
+	    }
+	    
+	    public HashMap<String, Integer> filtroDept(Integer espacio, Integer modelo) throws BusinessException{
+	    	HashMap<String, Integer> result = new HashMap<String, Integer>();
+	    	try {
+	    		sql = "Select departamento.nombre, count(*) from articulo"
+	    				+ " join departamento on articulo.departamento=departamento.iddepartamento "
+	    				+ "where true	";
+	    		if(espacio!=null) { sql+=" and espacio=?"; }
+	    		if(modelo!=null) { sql+=" and modelo=?"; }
+	    		sql += "group by departamento.nombre";
+	    		
+	    		pstm = con.prepareStatement(sql);
+	    		int numparam=1;
+	    		if(espacio!=null) pstm.setInt(numparam++, espacio);
+	    		if(modelo!=null) pstm.setInt(numparam++, modelo);
+	    		
+	    		rs = pstm.executeQuery();
+	    
+	    		while (rs.next()) {
+	    			result.put(rs.getString(1), rs.getInt(2));
+	    		}
+	    		return result;
+	    	}catch (SQLException e) {
+	            e.printStackTrace();
+	            throw new BusinessException("Error al buscar todos los departamentos");
+	        } finally {
+	            ConexionJdbc.cerrar(pstm);
+	            ConexionJdbc.cerrar(rs);
 	        }
 	    }
 }
